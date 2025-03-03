@@ -1,10 +1,5 @@
 package com.kosign.spring_security.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,22 +8,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kosign.spring_security.model.dto.AuthDto.AuthResponse;
 import com.kosign.spring_security.model.dto.AuthDto.AuthenticationRequest;
 import com.kosign.spring_security.model.dto.AuthDto.LoginResponse;
-import com.kosign.spring_security.model.dto.AuthDto.AuthResponse;
 import com.kosign.spring_security.model.dto.AuthDto.RegisterRequest;
 import com.kosign.spring_security.service.AuthService;
+import com.kosign.spring_security.utils.annotations.APIVersion;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@APIVersion("v1")
 @Tag(name = "Authentication", description = "Authentication management APIs")
 public class AuthController {
 
-    private final AuthService authService;
+    private AuthService authService;
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
+    @APIVersion(
+        value = "v1.1",
+        since = "2024-02-14",
+        description = "Added email validation",
+        breaking = true,
+        migrationGuide = "Update client to handle new email validation requirements",
+        backwardCompatibilityDuration = "30d",
+        requestExample = RegisterRequest.class,
+        responseExample = LoginResponse.class
+    )
     public ResponseEntity<LoginResponse> register(
             @Valid @RequestBody RegisterRequest request
     ) {
